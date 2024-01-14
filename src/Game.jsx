@@ -4,12 +4,20 @@ import Board from "./Board";
 const Game = () => {
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const [xIsNext, setXIsNext] = useState(true);
+  const [currentMove, setCurrentMove] = useState(0);
 
-  const currentSquares = history[history.length - 1];
+  const currentSquares = history[currentMove];
 
   const handlePlay = (nextSquare) => {
     setXIsNext(!xIsNext);
-    setHistory([...history, nextSquare]);
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquare];
+    setHistory(nextHistory);
+    setCurrentMove(nextHistory.length - 1);
+  };
+
+  const jumpTo = (step) => {
+    setCurrentMove(step);
+    setXIsNext(step % 2 === 0);
   };
 
   const moves = history.map((squares, move) => {
@@ -23,13 +31,13 @@ const Game = () => {
 
     return (
       <li key={move}>
-        <button onClick={() => {}}> {description} </button>
+        <button onClick={() => jumpTo(move)}> {description} </button>
       </li>
     );
   });
 
   return (
-    <div>
+    <div className="flex gap-36">
       <div>
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
